@@ -76,7 +76,12 @@ namespace msc2d
 		
 		cout << "Find critical point begin!" << endl;
 		CriticalPointArray &cp_vec = msc.cp_vec;//一维存放,cp_vec设为public类型可以访问，private不能访问,当定义为friend类时，可以访问私有类型
-		cp_vec.clear();
+		CriticalPointArray &minPoint = msc.minPoints;
+		CriticalPointArray &maxPoint = msc.maxPoints;
+		CriticalPointArray &saddles = msc.saddles;
+		CriticalPointArray &keyPoint = msc.keyPoint;
+
+		cp_vec.clear(); minPoint.clear(); maxPoint.clear(); saddles.clear();
 		//cp_vec.resize(vr.dim[0] * vr.dim[1]);
 		size_t k = 0,count_cp=0;
 
@@ -186,7 +191,7 @@ namespace msc2d
 				if (dif__xx < -1)dif__xx = -1;
 				if (dif__yy > 1)dif__yy = 1;
 				if (dif__yy < -1)dif__yy = -1;
-				dif__xy = 0;
+				//dif__xy = 0;
 				//286_214数据
 				/*if(dif__x<3e-14&&dif__x>-3e-14)
 				dif__x=0;
@@ -237,12 +242,14 @@ namespace msc2d
 							cp.type = MAXIMAL;
 							cp.eig_vector1 = make_pair(0,0);
 							cp.eig_vector2 = make_pair(0, 0);
+							maxPoint.push_back(cp);
 						}
 						else if (eig_value[0]>0 && eig_value[1]>0)
 						{
 							cp.type = MINIMAL;
 							cp.eig_vector1 = make_pair(0, 0);
 							cp.eig_vector2 = make_pair(0, 0);
+							minPoint.push_back(cp);
 						}
 						else
 						{
@@ -250,10 +257,11 @@ namespace msc2d
 							//特征向量
 							cp.eig_vector1 = make_pair(eig_vector[0][0], eig_vector[1][0]);
 							cp.eig_vector2 = make_pair(eig_vector[0][1], eig_vector[1][1]);
+							saddles.push_back(cp);
 						}
 						//value <<i << " "<<j<<" "<<cp.type<<endl;
 					}	
-
+					keyPoint.push_back(cp);
 				}
 				else 
 					cp.type = REGULAR;
@@ -279,7 +287,10 @@ namespace msc2d
 			dif_yy << endl;*/
 		}
 		delete bs;
-		cout <<"critical point number:"<< count_cp << endl;
+		cout <<"Critical point number:"<< keyPoint.size() << endl;
+		cout << "Max point number:" << maxPoint.size() << endl;
+		cout << "Saddle point number:" << keyPoint.size() << endl;
+		cout << "Min point number:" << keyPoint.size() << endl;
 		cout << "End !" << endl << endl;
 	}
 	
@@ -434,5 +445,99 @@ namespace msc2d
 		return 1;
 	}
 
+	double EvaluateVal(const double x, const double y)
+	{
+		box_spline* bs;
+		bs = new box_spline();
+		int position[2];
+		double tmpValue, val = 0;
+		double distance[2];
+		
+		if (x<3 || y<3 || x>vr.dim[0] - 3 || y>vr.dim[1] - 3)
+		{
+			return vr.getData(floor(x + 0.5), floor(position[1] + 0.5));
+		}
+		for (int p = 0; p < 7; p++)
+		{
+			for (int q = 0; q < 7; q++)
+			{
+				position[0] = cut((int)floor(x + 0.5) + p - 3, vr.dim[0]);
+				position[1] = cut((int)floor(y + 0.5) + q - 3, vr.dim[1]);
+				distance[0] = position[0] - x;
+				distance[1] = position[1] - y;
+				tmpValue = bs->compute_value(distance);
+				val += vr.getData(position[0], position[1])*tmpValue;
+			}
+		}
+		delete bs;
+		if (val > 4)val = 4;
+		if (val < 0)val = 0;
+
+		return val;
+
+	}
+	double EvaluateGradX(const double x, const double y)
+	{
+		box_spline* bs;
+		bs = new box_spline();
+		int position[2];
+		double tmpValue, val = 0;;
+		double distance[2];
+
+		if ( x<3 ||  y<3 ||  x>vr.dim[0] - 3 ||  y>vr.dim[1] - 3)
+		{
+			return vr.getData(floor( x + 0.5), floor(position[1] + 0.5));
+		}
+		for (int p = 0; p < 6; p++)
+		{
+			for (int q = 0; q < 7; q++)
+			{
+				position[0] = cut((int)floor( x + 0.5) + p - 3, vr.dim[0]);
+				position[1] = cut((int)floor( y + 0.5) + q - 3, vr.dim[1]);
+				distance[0] = position[0] -  x;
+				distance[1] = position[1] -  y;
+				tmpValue = bs->compute_gradient_x(distance);
+				val += vr.getData(position[0], position[1])*tmpValue;
+			}
+		}
+		delete bs;
+		if (val > 1)val = 1;
+		if (val < -1)val = -1;
+		if (val< LARGE_ZERO_EPSILON &&val>-LARGE_ZERO_EPSILON)
+			val = 0;
+		
+		return val;
+	}
+	double EvaluateGradY(const double x, const double y)
+	{
+		box_spline* bs;
+		bs = new box_spline();
+		int position[2];
+		double tmpValue, val = 0;;
+		double distance[2];
+
+		if ( x<3 ||  y<3 ||  x>vr.dim[0] - 3 ||  y>vr.dim[1] - 3)
+		{
+			return vr.getData(floor( x + 0.5), floor(position[1] + 0.5));
+		}
+		for (int p = 0; p < 6; p++)
+		{
+			for (int q = 0; q < 7; q++)
+			{
+				position[0] = cut((int)floor( x + 0.5) + p - 3, vr.dim[0]);
+				position[1] = cut((int)floor( y + 0.5) + q - 3, vr.dim[1]);
+				distance[0] = position[0] -  x;
+				distance[1] = position[1] -  y;
+				tmpValue = bs->compute_gradient_y(distance);
+				val += vr.getData(position[0], position[1])*tmpValue;
+			}
+		}
+		delete bs;
+		if (val > 1)val = 1;
+		if (val < -1)val = -1;
+		if (val<LARGE_ZERO_EPSILON&&val>-LARGE_ZERO_EPSILON)
+			val = 0;
+		return val;
+	}
 
 }

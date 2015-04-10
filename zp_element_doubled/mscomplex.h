@@ -45,6 +45,11 @@ namespace msc2d
 
 
 		CriticalPointArray cp_vec;
+		CriticalPointArray minPoints;
+		CriticalPointArray maxPoints;
+		CriticalPointArray saddles;
+		CriticalPointArray keyPoint;
+
 		IntegrationLineArray il_vec;
 
 		friend class CPFinder;

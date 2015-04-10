@@ -16,22 +16,14 @@ namespace msc2d
 	ILTracer::ILTracer(MSComplex2D& _msc) :msc(_msc){}
 	ILTracer::~ILTracer(){}
 
-	/*bool ILTracer::createWEdge()
-	{
-		wedge_vec.clear();
-		wedge_vec.resize(vr_size);
-		for (size_t vid = 0; vid < vr_size; ++vid)
-		{
-			WEdge& we = wedge_vec[vid];
-			const vertHandleArray &adj_vertices=
-		}
-	}*/
+	
 	int ILTracer::Round(double r)
 	{
 		if (r > 0)
 			return ceil(r);
-		else
+			else
 			return floor(r);
+		//return ceil(r);
 	}
 	bool ILTracer::traceAscendingPath()
 	{
@@ -59,22 +51,7 @@ namespace msc2d
 						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector1.first;
 						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector1.second;
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
-						/*int k1x = Round(eig_vector_x);
-						int k2x = Round(msc.cp_vec[(cur_x - k1x)*vr_size + cur_y - 1].dif.first);
-						int k3x = Round(msc.cp_vec[(cur_x - k2x)*vr_size + cur_y - 1].dif.first);
-
-						int k1y = Round(eig_vector_y);
-						int k2y = Round(msc.cp_vec[cur_x - 1 + (cur_y - k1y)*vr_size].dif.second);
-						int k3y = Round(msc.cp_vec[cur_x - 1 + (cur_y - k2y)*vr_size].dif.second);
-
-						int next_x = cur_x - Round((eig_vector_x +
-						2 * (msc.cp_vec[(cur_x - k1x)*vr_size + cur_y - 1].dif.first) +
-						2 * (msc.cp_vec[(cur_x - k2x)*vr_size + cur_y - 1].dif.first) +
-						msc.cp_vec[(cur_x - k3x)*vr_size + cur_y - 2].dif.first) / 3);
-						int next_y = cur_y - Round((eig_vector_y +
-						2 * (msc.cp_vec[cur_x -1 + (cur_y - k1y)*vr_size].dif.second) +
-						2 * (msc.cp_vec[cur_x - 1 + (cur_y - k2y)*vr_size].dif.second) +
-						msc.cp_vec[cur_x - 2 + (cur_y - k3y)*vr_size].dif.second) / 3);*/
+					
 						mesh_path.push_back(xy);
 						curr_vid = xy.first*vr_size + xy.second;
 					}
@@ -108,13 +85,29 @@ namespace msc2d
 				il.startIndex = it->xy_local;
 				il.endIndex = mesh_path[mesh_path.size() - 1];
 			}
-		}
-		
+		}		
 		return true;
 		}
 	
-	pair<int,int>ILTracer::getTheSaddleBeginDirection(pair<int,int> xy,pair<double,double> eig_vector)
+	pair<double,double>ILTracer::getTheSaddleBeginDirection(pair<int,int> xy,pair<double,double> eig_vector)
 	{
+		/*int x = xy.first, y = xy.second;
+
+		double k1x = eig_vector.first;
+		double k2x = Round(EvaluateGradX(x + k1x, y + 1));
+		double k3x = Round(EvaluateGradX(x + k2x, y + 1));
+		double k4x = Round(EvaluateGradX(x + k3x, y + 2));
+
+		double k1y = eig_vector.second;
+		double k2y = Round(EvaluateGradY(x + 1, y + k1y));
+		double k3y = Round(EvaluateGradY(x + 1, y + k2y));
+		double k4y = Round(EvaluateGradY(x + 2, y + k3y));
+
+		double kx = x + (k1x + 2 * k2x + 2 * k3x + k4x) / 3;
+		double ky = y + (k1y + 2 * k2y + 2 * k3y + k4y) / 3;
+
+		return make_pair(Round(kx),Round(ky));*/
+
 		int cur_x = xy.first;
 		int cur_y = xy.second;
 		double eig_vector_x = eig_vector.first;
@@ -128,24 +121,40 @@ namespace msc2d
 		int k3y = Round(msc.cp_vec[cur_x + 1 + (cur_y + k2y)*vr_size].dif.second);
 
 		int next_x = cur_x + Round(
-			(eig_vector_x +
-			2 * (msc.cp_vec[(cur_x + k1x)*vr_size + cur_y + 1].dif.first) +
-			2 * (msc.cp_vec[(cur_x + k2x)*vr_size + cur_y + 1].dif.first) +
-			msc.cp_vec[(cur_x + k3x)*vr_size + cur_y + 2].dif.first) / 3);
+		(eig_vector_x +
+		2 * (msc.cp_vec[(cur_x + k1x)*vr_size + cur_y + 1].dif.first) +
+		2 * (msc.cp_vec[(cur_x + k2x)*vr_size + cur_y + 1].dif.first) +
+		msc.cp_vec[(cur_x + k3x)*vr_size + cur_y + 2].dif.first) / 3);
 		int next_y = cur_y + Round(
-			(eig_vector_y +
-			2 * (msc.cp_vec[cur_x + 1 + (cur_y + k1y)*vr_size].dif.second) +
-			2 * (msc.cp_vec[cur_x + 1 + (cur_y + k2y)*vr_size].dif.second) +
-			msc.cp_vec[cur_x + 2 + (cur_y + k3y)*vr_size].dif.second) / 3);
+		(eig_vector_y +
+		2 * (msc.cp_vec[cur_x + 1 + (cur_y + k1y)*vr_size].dif.second) +
+		2 * (msc.cp_vec[cur_x + 1 + (cur_y + k2y)*vr_size].dif.second) +
+		msc.cp_vec[cur_x + 2 + (cur_y + k3y)*vr_size].dif.second) / 3);
 		return make_pair(next_x, next_y);
 	}
-	pair<int,int> ILTracer::getGradDirection(pair<int,int> xy)
+	pair<double,double> ILTracer::getGradDirection(pair<int,int> xy)
 	{
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
 		int x = xy.first, y = xy.second;
-		int k1x = Round(msc.cp_vec[x*vr_size+y].dif.first);
-		int k2x=Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
+/*
+		double k1x = Round(EvaluateGradX(x, y));
+		double k2x = Round(EvaluateGradX(x + k1x, y + 1));
+		double k3x = Round(EvaluateGradX(x + k2x, y + 1));
+		double k4x = Round(EvaluateGradX(x + k3x, y + 2));
+
+		double k1y = Round(EvaluateGradY(x, y));
+		double k2y = Round(EvaluateGradY(x + 1, y + k1y));
+		double k3y = Round(EvaluateGradY(x + 1, y + k2y));
+		double k4y = Round(EvaluateGradY(x + 2, y + k3y));
+
+		double kx = x + (k1x + 2*k2x + 2*k3x + k4x) / 3;
+		double ky = y + (k1y + 2*k2y + 2*k3y + k4y) / 3;
+
+		return make_pair(Round(kx), Round(ky));*/
+
+		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
 		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first);
 		int k1y = Round(msc.cp_vec[y*vr_size + x].dif.second);
 		int k2y = Round(msc.cp_vec[(y + k1y)*vr_size + x + 1].dif.second);
@@ -159,27 +168,11 @@ namespace msc2d
 			2 * msc.cp_vec[(y + k2y)*vr_size + x + 1].dif.second +
 			msc.cp_vec[(y + k3y)*vr_size + x + 2].dif.second) / 3);
 		if (tmp_x < 0 || tmp_y < 0)
-			return make_pair(x,y);
+			return make_pair(x, y);
 		int next_X = x + tmp_x;
 		int next_Y = y + tmp_y;
-		
-		/*int x = xy.first, y = xy.second;
-		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
-		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first);
-		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first);
-		int next_X = x + Round((msc.cp_vec[x*vr_size + y].dif.first + 
-			2 * msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first + 
-			2 * msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first + 
-			msc.cp_vec[(x - k3x)*vr_size + y - 2].dif.first) / 3);
-		int k1y = Round(msc.cp_vec[y*vr_size + x].dif.second);
-		int k2y = Round(msc.cp_vec[(y - k1y)*vr_size + x - 1].dif.second);
-		int k3y = Round(msc.cp_vec[(y - k2y)*vr_size + x - 1].dif.second);
-		int next_Y = y + Round((msc.cp_vec[y*vr_size + x].dif.second + 
-			2 * msc.cp_vec[(y - k1y)*vr_size + x - 1].dif.second + 
-			2 * msc.cp_vec[(y - k2y)*vr_size + x - 1].dif.second +
-			msc.cp_vec[(y - k3y)*vr_size + x - 2].dif.second) / 3);*/
 
-		return make_pair(next_X, next_Y); 
+		return make_pair(next_X, next_Y);
 
 	}
 	pair<int, int> ILTracer::getGradDirection1(pair<int, int> xy)

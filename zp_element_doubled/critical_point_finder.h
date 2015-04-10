@@ -53,5 +53,8 @@ namespace msc2d
 
 	};
 		
+	double EvaluateVal(const double x,const double y);
+	double EvaluateGradX(const double x, const double y);
+	double EvaluateGradY(const double x, const double y);
 }
 #endif

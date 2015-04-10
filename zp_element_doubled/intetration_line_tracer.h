@@ -25,8 +25,8 @@ namespace msc2d
 	private:
 		bool createWEdge();
 		
-		pair<int, int> getTheSaddleBeginDirection(pair<int, int> xy, pair<double, double> eig_vector);
-		pair<int, int> getGradDirection(pair<int, int> xy);
+		pair<double, double> getTheSaddleBeginDirection(pair<int, int> xy, pair<double, double> eig_vector);
+		pair<double, double> getGradDirection(pair<int, int> xy);
 		pair<int, int> ILTracer::getGradDirection1(pair<int, int> xy);
 
 		std::vector<WEdge> wedge_vec;
