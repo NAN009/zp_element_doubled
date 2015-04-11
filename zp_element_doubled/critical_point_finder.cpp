@@ -54,9 +54,9 @@ namespace msc2d
 		
 		vr.loadFile("D:\\401data\\sin401.vtk");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
 		double x_ordinates[10000], y_ordinates[10000];//第一个参数为列，按列读取数据
-		//ofstream value("D:\\401data\\sin401_cp.txt");
-		//ofstream dif_x("D:\\data\\201sin_dif_x.txt");
-		//ofstream dif_y("D:\\data\\201sin_dif_y.txt");
+		ofstream value("D:\\401data\\sin401_cp1.txt");
+		ofstream dif_x("D:\\401data\\sin401_dif_x1.txt");
+		ofstream dif_y("D:\\401data\\sin401_dif_y1.txt");
 		//ofstream dif_xx("D:\\data\\201sin_dif_xx.txt");
 		//ofstream dif_xy("D:\\data\\201sin_dif_xy.txt");
 		//ofstream dif_yy("D:\\data\\201sin_dif_yy.txt");
@@ -83,7 +83,7 @@ namespace msc2d
 
 		cp_vec.clear(); minPoint.clear(); maxPoint.clear(); saddles.clear();
 		//cp_vec.resize(vr.dim[0] * vr.dim[1]);
-		size_t k = 0,count_cp=0;
+		size_t k = 0;
 
 		for (int i = 0; i < vr.dim[0]; i++)
 		{
@@ -93,7 +93,7 @@ namespace msc2d
 				//value
 				if (i == 0 || i == 1 || j == 0 || j == 1 || i == vr.dim[0] - 1 || i == vr.dim[0] - 2 || j == vr.dim[1] - 1 || j == vr.dim[1] - 2)
 				{		
-					Value = vr.getData(position[0], position[1]);
+					Value = vr.getData(i, j);
 					//cout << Value << " ";
 				}
 				else
@@ -224,12 +224,12 @@ namespace msc2d
 					cp.xy_local.first = i;
 					cp.xy_local.second = j;
 					cp.meshIndex = i*vr.dim[0] + j;
-					cp.dif = make_pair(dif__x, dif__y);
+					cp.dif = make_pair(dif__x*20, dif__y*20);//偏导数扩大20倍
 					
 					
 				if (dif__x == 0 && dif__y == 0)
 				{
-					count_cp++; 
+					
 					double eig_value[2], eig_vector[2][2], dif[2][2], eps = 0.000001;
 					const int Dim = 2, nJt = 1000000;
 					
@@ -241,7 +241,7 @@ namespace msc2d
 						{
 							cp.type = MAXIMAL;
 							cp.eig_vector1 = make_pair(0,0);
-							cp.eig_vector2 = make_pair(0, 0);
+							cp.eig_vector2 = make_pair(0,0);
 							maxPoint.push_back(cp);
 						}
 						else if (eig_value[0]>0 && eig_value[1]>0)
@@ -271,18 +271,18 @@ namespace msc2d
 				
 				
 				
-				/*//cout << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << cp_vec[i].type << endl;
-				//value <<  << " ";
+				//cout << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << cp_vec[i].type << endl;
+				value << Value << " ";
 				dif_x << dif__x << " ";
 				dif_y << dif__y << " ";
-				dif_xx << dif__xx << " ";
+				/*dif_xx << dif__xx << " ";
 				dif_xy << dif__xy << " ";
 				dif_yy << dif__yy << " ";*/
 			}
-			//value << endl;
-			/*dif_x << endl;
+			value << endl;
+			dif_x << endl;
 			dif_y << endl;
-			dif_xx << endl;
+			/*dif_xx << endl;
 			dif_xy << endl;
 			dif_yy << endl;*/
 		}
