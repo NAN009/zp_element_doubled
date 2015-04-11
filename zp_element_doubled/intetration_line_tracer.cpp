@@ -44,15 +44,15 @@ namespace msc2d
 					{
 						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
 
-						double eig_vector_x = -msc.cp_vec[curr_vid].eig_vector1.first;
-						double eig_vector_y = -msc.cp_vec[curr_vid].eig_vector1.second;
+						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector2.first;
+						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector2.second;
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 					
 						mesh_path.push_back(xy);
 						curr_vid = xy.first*vr_size + xy.second;
 					}
 					pair<int, int> tmp_xy;
-					tmp_xy = getGradDirection1(msc.cp_vec[curr_vid].xy_local);
+					tmp_xy = getGradDirectionDown1(msc.cp_vec[curr_vid].xy_local);
 					if (tmp_xy.first == msc.cp_vec[curr_vid].xy_local.first&&
 						tmp_xy.second == msc.cp_vec[curr_vid].xy_local.second)
 					{
@@ -63,7 +63,7 @@ namespace msc2d
 					mesh_path.push_back(tmp_xy);
 					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
 						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
-						tmp_xy.first <= 0 || tmp_xy.second <= 0)
+						tmp_xy.first <= 2 || tmp_xy.second <= 2)
 						break;
 
 					prev_vid = curr_vid;
@@ -138,6 +138,8 @@ namespace msc2d
 		msc.cp_vec[cur_x + 2 + (cur_y + k3y)*vr_size].dif.second) / 3);
 		return make_pair(next_x, next_y);*/
 	}
+	//getGradDirection函数选择：eig_vector1选Up,-eig_vector1选down,
+	//							eig_vector2选Up1 -eig_vector2选Down1
 	pair<double,double> ILTracer::getGradDirectionUp(pair<int,int> xy)
 	{
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
@@ -229,5 +231,59 @@ namespace msc2d
 		return make_pair(next_X, next_Y);
 
 	}
+	
+	pair<double, double> ILTracer::getGradDirectionUp1(pair<int, int> xy)
+	{
+		//四阶龙格库塔法 h=2,待检验，Round向下取整
+
+		int x = xy.first, y = xy.second;
+		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
+		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first);
+		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
+			2 * msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first +
+			2 * msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first +
+			msc.cp_vec[(x + k3x)*vr_size + y + 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
+			2 * msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second +
+			2 * msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second +
+			msc.cp_vec[(x + 2)*vr_size + y + k3y].dif.second) / 3);
+		
+		int next_X = x - tmp_x;
+		int next_Y = y - tmp_y;
+
+		return make_pair(next_X, next_Y);
+		
+	}
+	pair<int, int> ILTracer::getGradDirectionDown1(pair<int, int> xy)
+	{
+		//四阶龙格库塔法 h=2,待检验，Round向下取整
+
+		int x = xy.first, y = xy.second;
+		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first);
+		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first);
+		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
+			2 * msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first +
+			2 * msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first +
+			msc.cp_vec[(x - k3x)*vr_size + y - 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second +
+			msc.cp_vec[(x - 2)*vr_size + y - k3y].dif.second) / 3);
+
+		int next_X = x - tmp_x;
+		int next_Y = y - tmp_y;
+
+		return make_pair(next_X, next_Y);
+
+	}
+
 }
 

@@ -28,7 +28,8 @@ namespace msc2d
 		pair<double, double> getTheSaddleBeginDirection(pair<int, int> xy, pair<double, double> eig_vector);
 		pair<double, double> getGradDirectionUp(pair<int, int> xy);
 		pair<int, int> ILTracer::getGradDirectionDown(pair<int, int> xy);
-
+		pair<double, double> ILTracer::getGradDirectionUp1(pair<int, int> xy);
+		pair<int, int> ILTracer::getGradDirectionDown1(pair<int, int> xy);
 		std::vector<WEdge> wedge_vec;
 		MSComplex2D& msc;
 	};
