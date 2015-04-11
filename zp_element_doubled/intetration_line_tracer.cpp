@@ -44,15 +44,15 @@ namespace msc2d
 					{
 						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
 
-						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector1.first;
-						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector1.second;
+						double eig_vector_x = -msc.cp_vec[curr_vid].eig_vector1.first;
+						double eig_vector_y = -msc.cp_vec[curr_vid].eig_vector1.second;
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 					
 						mesh_path.push_back(xy);
 						curr_vid = xy.first*vr_size + xy.second;
 					}
 					pair<int, int> tmp_xy;
-					tmp_xy = getGradDirection(msc.cp_vec[curr_vid].xy_local);
+					tmp_xy = getGradDirection1(msc.cp_vec[curr_vid].xy_local);
 					if (tmp_xy.first == msc.cp_vec[curr_vid].xy_local.first&&
 						tmp_xy.second == msc.cp_vec[curr_vid].xy_local.second)
 					{
@@ -138,7 +138,7 @@ namespace msc2d
 		msc.cp_vec[cur_x + 2 + (cur_y + k3y)*vr_size].dif.second) / 3);
 		return make_pair(next_x, next_y);*/
 	}
-	pair<double,double> ILTracer::getGradDirection(pair<int,int> xy)
+	pair<double,double> ILTracer::getGradDirectionUp(pair<int,int> xy)
 	{
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
@@ -203,7 +203,7 @@ namespace msc2d
 		return make_pair(next_X, next_Y);*/
 
 	}
-	pair<int, int> ILTracer::getGradDirection1(pair<int, int> xy)
+	pair<int, int> ILTracer::getGradDirectionDown(pair<int, int> xy)
 	{
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
@@ -211,17 +211,20 @@ namespace msc2d
 		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
 		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first);
 		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first);
-		int next_X = x + Round((msc.cp_vec[x*vr_size + y].dif.first +
-		2 * msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first +
-		2 * msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first +
-		msc.cp_vec[(x - k3x)*vr_size + y - 2].dif.first) / 3);
-		int k1y = Round(msc.cp_vec[y*vr_size + x].dif.second);
-		int k2y = Round(msc.cp_vec[(y - k1y)*vr_size + x - 1].dif.second);
-		int k3y = Round(msc.cp_vec[(y - k2y)*vr_size + x - 1].dif.second);
-		int next_Y = y + Round((msc.cp_vec[y*vr_size + x].dif.second +
-		2 * msc.cp_vec[(y - k1y)*vr_size + x - 1].dif.second +
-		2 * msc.cp_vec[(y - k2y)*vr_size + x - 1].dif.second +
-		msc.cp_vec[(y - k3y)*vr_size + x - 2].dif.second) / 3);
+		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
+			2 * msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first +
+			2 * msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first +
+			msc.cp_vec[(x - k3x)*vr_size + y - 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second +
+			msc.cp_vec[(x - 2)*vr_size + y - k3y].dif.second) / 3);
+		
+		int next_X = x + tmp_x;
+		int next_Y = y + tmp_y;
 
 		return make_pair(next_X, next_Y);
 
