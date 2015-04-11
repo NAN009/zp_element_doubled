@@ -54,9 +54,9 @@ namespace msc2d
 		
 		vr.loadFile("D:\\401data\\sin401.vtk");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
 		double x_ordinates[10000], y_ordinates[10000];//第一个参数为列，按列读取数据
-		ofstream value("D:\\401data\\sin401_cp1.txt");
+		//ofstream value("D:\\401data\\sin401_cp1.txt");
 		ofstream dif_x("D:\\401data\\sin401_dif_x1.txt");
-		ofstream dif_y("D:\\401data\\sin401_dif_y1.txt");
+		//ofstream dif_y("D:\\401data\\sin401_dif_y1.txt");
 		//ofstream dif_xx("D:\\data\\201sin_dif_xx.txt");
 		//ofstream dif_xy("D:\\data\\201sin_dif_xy.txt");
 		//ofstream dif_yy("D:\\data\\201sin_dif_yy.txt");
@@ -91,39 +91,62 @@ namespace msc2d
 			{
 				sum = 0; dif__x = 0; dif__y = 0; dif__yy = 0, dif__xy = 0, Value = 0, dif__xx = 0;
 				//value
-				if (i == 0 || i == 1 || j == 0 || j == 1 || i == vr.dim[0] - 1 || i == vr.dim[0] - 2 || j == vr.dim[1] - 1 || j == vr.dim[1] - 2)
-				{		
-					Value = vr.getData(i, j);
-					//cout << Value << " ";
-				}
-				else
+				//if (i == 0 || i == 1 || j == 0 || j == 1 || i == vr.dim[0] - 1 || i == vr.dim[0] - 2 || j == vr.dim[1] - 1 || j == vr.dim[1] - 2)
+				//{		
+				//	Value = vr.getData(i, j);
+				//	//cout << Value << " ";
+				//}
+				//else
+				//{
+				//	for (int p = 0; p < 7; p++)
+				//	{
+				//		for (int q = 0; q < 7; q++)
+				//		{
+				//			position[0] = cut((int)floor(x_ordinates[i] + 0.5) + p - 3, vr.dim[0]);
+				//			position[1] = cut((int)floor(y_ordinates[j] + 0.5) + q - 3, vr.dim[1]);
+				//			distance[0] = position[0] - x_ordinates[i];
+				//			distance[1] = position[1] - y_ordinates[j];
+				//			value0 = bs->compute_value(distance);
+				//			
+				//			diff_x = vr.getData(cut(position[0] + 1, vr.dim[0]), position[1])
+				//					+ vr.getData(cut(position[0] - 1, vr.dim[0]), position[1])
+				//					- 2 * vr.getData(position[0], position[1]);
+				//				
+				//			diff_y = vr.getData(position[0], cut(position[1] + 1, vr.dim[1]))
+				//					+ vr.getData(position[0], cut(position[1] - 1, vr.dim[1]))
+				//					- 2 * vr.getData(position[0], position[1]);
+				//			
+				//			f_with_diff = vr.getData(position[0],position[1]) - 1.0*(diff_x + diff_y) / 8;							
+				//			Value += f_with_diff*value0;
+				//			
+				//		}
+				//	}
+				//}
+				//if (Value > 4)Value = 4;
+
+				//求导
+				for (int p = 0; p < 7; p++)
 				{
-					for (int p = 0; p < 7; p++)
+					for (int q = 0; q < 6; q++)
 					{
-						for (int q = 0; q < 7; q++)
-						{
-							position[0] = cut((int)floor(x_ordinates[i] + 0.5) + p - 3, vr.dim[0]);
-							position[1] = cut((int)floor(y_ordinates[j] + 0.5) + q - 3, vr.dim[1]);
-							distance[0] = position[0] - x_ordinates[i];
-							distance[1] = position[1] - y_ordinates[j];
-							value0 = bs->compute_value(distance);
-							
-							diff_x = vr.getData(cut(position[0] + 1, vr.dim[0]), position[1])
-									+ vr.getData(cut(position[0] - 1, vr.dim[0]), position[1])
-									- 2 * vr.getData(position[0], position[1]);
-								
-							diff_y = vr.getData(position[0], cut(position[1] + 1, vr.dim[1]))
-									+ vr.getData(position[0], cut(position[1] - 1, vr.dim[1]))
-									- 2 * vr.getData(position[0], position[1]);
-							
-							f_with_diff = vr.getData(position[0],position[1]) - 1.0*(diff_x + diff_y) / 8;							
-							Value += f_with_diff*value0;
-							
-						}
+						position[0] = cut((int)floor(x_ordinates[i] + 0.5) + p - 3, vr.dim[0]);
+						position[1] = cut((int)floor(y_ordinates[j] + 0.5) + q - 3, vr.dim[1]);
+						distance[0] = position[0] - x_ordinates[i]+0.5;
+						distance[1] = position[1] - y_ordinates[j];
+
+						value1 = bs->compute_gradient_x(distance);								
+						/*diff_x = vr.getData(cut(position[0] + 1, vr.dim[0]), position[1])
+							+ vr.getData(cut(position[0] - 1, vr.dim[0]), position[1])
+							- 2 * vr.getData(position[0], position[1]);
+						diff_y = vr.getData(position[0], cut(position[1] + 1, vr.dim[1]))
+							+ vr.getData(position[0], cut(position[1] - 1, vr.dim[1]))
+							- 2 * vr.getData(position[0], position[1]);
+
+						f_with_diff = vr.getData(position[0], position[1]) - 1.0*(diff_x + diff_y) / 8;
+						dif__x += f_with_diff*value1;*/
+						dif__x += vr.getData(position[0], position[1])*value1;									
 					}
 				}
-				if (Value > 4)Value = 4;
-				//求导
 				for (int p = 0; p < 6; p++)
 				{
 					for (int q = 0; q < 7; q++)
@@ -133,11 +156,9 @@ namespace msc2d
 						distance[0] = position[0] - x_ordinates[i];
 						distance[1] = position[1] - y_ordinates[j];
 
-						value1 = bs->compute_gradient_x(distance);
 						value2 = bs->compute_gradient_y(distance);
-						dif__x += vr.getData(position[0], position[1])*value1;
 						dif__y += vr.getData(position[0], position[1])*value2;
-						
+
 					}
 				}
 				//导数最值
@@ -272,16 +293,16 @@ namespace msc2d
 				
 				
 				//cout << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << cp_vec[i].type << endl;
-				value << Value << " ";
+				//value << Value << " ";
 				dif_x << dif__x << " ";
-				dif_y << dif__y << " ";
+				//dif_y << dif__y << " ";
 				/*dif_xx << dif__xx << " ";
 				dif_xy << dif__xy << " ";
 				dif_yy << dif__yy << " ";*/
 			}
-			value << endl;
+			//value << endl;
 			dif_x << endl;
-			dif_y << endl;
+			//dif_y << endl;
 			/*dif_xx << endl;
 			dif_xy << endl;
 			dif_yy << endl;*/

@@ -44,8 +44,8 @@ namespace msc2d
 					{
 						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
 
-						double eig_vector_x = -msc.cp_vec[curr_vid].eig_vector1.first;
-						double eig_vector_y = -msc.cp_vec[curr_vid].eig_vector1.second;
+						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector1.first;
+						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector1.second;
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 					
 						mesh_path.push_back(xy);

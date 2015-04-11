@@ -46,7 +46,8 @@ double box_spline::compute_gradient_x(double x[])
 	tmp2++;
 	*tmp1 = x[1];
 	*tmp2 = x[1];
-	return pe7->evaluate(p1)-pe7->evaluate(p2);
+	return pe7->evaluate(p2)-pe7->evaluate(p1);//Ô­³ÌÐò£ºpe7->evaluate(p1)-pe7->evaluate(p2)
+	
 	}
 
 double box_spline::compute_gradient_y(double x[])
