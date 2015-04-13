@@ -36,13 +36,13 @@
     <ClCompile Include="zp_element_doubled.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="intetration_line_tracer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="critical_point_finder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="mscomplex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="integration_line_tracer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,13 +71,13 @@
     <ClInclude Include="zp_element_doubled.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="intetration_line_tracer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="critical_point_finder.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="mscomplex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="integration_line_tracer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

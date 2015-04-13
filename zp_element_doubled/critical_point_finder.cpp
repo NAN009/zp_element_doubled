@@ -245,7 +245,7 @@ namespace msc2d
 					cp.xy_local.first = i;
 					cp.xy_local.second = j;
 					cp.meshIndex = i*vr.dim[0] + j;
-					cp.dif = make_pair(dif__x*20, dif__y*20);//偏导数扩大20倍
+					cp.dif = make_pair(dif__x*20, dif__y*20);//步长为0.05，偏导数要扩大20倍
 					
 					
 				if (dif__x == 0 && dif__y == 0)
@@ -310,8 +310,8 @@ namespace msc2d
 		delete bs;
 		cout <<"Critical point number:"<< keyPoint.size() << endl;
 		cout << "Max point number:" << maxPoint.size() << endl;
-		cout << "Saddle point number:" << keyPoint.size() << endl;
-		cout << "Min point number:" << keyPoint.size() << endl;
+		cout << "Saddle point number:" << saddles.size() << endl;
+		cout << "Min point number:" << minPoint.size() << endl;
 		cout << "End !" << endl << endl;
 	}
 	

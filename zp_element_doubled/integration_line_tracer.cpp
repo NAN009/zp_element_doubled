@@ -1,4 +1,4 @@
-#include "intetration_line_tracer.h"
+#include "integration_line_tracer.h"
 #include "critical_point_finder.h"
 #include <iostream>
 #include <vector>
@@ -21,12 +21,12 @@ namespace msc2d
 		return r > 0?ceil(r) :floor(r);
 	//	return floor(r+0.5);
 	}
-	bool ILTracer::traceAscendingPath()
+	bool ILTracer::traceIntegrationPath()
 	{
-		cout << "Trace ascending path" << endl;
-		for (vector<CriticalPoint>::iterator it = msc.cp_vec.begin(); it != msc.cp_vec.end(); ++it)
+		cout << "Trace line path" << endl;
+		//ascend first part
+		for (vector<CriticalPoint>::iterator it = msc.saddles.begin(); it != msc.saddles.end(); ++it)
 		{
-
 			if (it->type == SADDLE)
 			{
 				CriticalPoint& sad = *it;
@@ -44,22 +44,17 @@ namespace msc2d
 					{
 						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
 
-						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector2.first;
-						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector2.second;
+ 
+						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector1.first;
+						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector1.second;
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 					
 						mesh_path.push_back(xy);
 						curr_vid = xy.first*vr_size + xy.second;
 					}
 					pair<int, int> tmp_xy;
-					tmp_xy = getGradDirectionDown1(msc.cp_vec[curr_vid].xy_local);
-					if (tmp_xy.first == msc.cp_vec[curr_vid].xy_local.first&&
-						tmp_xy.second == msc.cp_vec[curr_vid].xy_local.second)
-					{
-
-						cout << "ERROR,This line is ascend£¡" << endl;
-						break;
-					}
+					tmp_xy = getGradDirectionUp(msc.cp_vec[curr_vid].xy_local);
+					
 					mesh_path.push_back(tmp_xy);
 					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
 						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
@@ -81,7 +76,164 @@ namespace msc2d
 				il.startIndex = it->xy_local;
 				il.endIndex = mesh_path[mesh_path.size() - 1];
 			}
-		}		
+		}	
+		//ascend second part
+		for (vector<CriticalPoint>::iterator it = msc.saddles.begin(); it != msc.saddles.end(); ++it)
+		{
+			if (it->type == SADDLE)
+			{
+				CriticalPoint& sad = *it;
+
+				int prev_vid = -1, curr_vid = sad.meshIndex;
+
+				msc.il_vec.push_back(IntegrationLine());
+				IntegrationLine &il = msc.il_vec[msc.il_vec.size() - 1];
+				PATH& mesh_path = il.path;
+				mesh_path.push_back(make_pair(sad.xy_local.first, sad.xy_local.second));
+
+				while (msc.cp_vec[curr_vid].type != MAXIMAL)
+				{
+					while (msc.cp_vec[curr_vid].type == SADDLE)
+					{
+						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
+
+						double eig_vector_x = -msc.cp_vec[curr_vid].eig_vector1.first;
+						double eig_vector_y = -msc.cp_vec[curr_vid].eig_vector1.second;
+						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
+
+						mesh_path.push_back(xy);
+						curr_vid = xy.first*vr_size + xy.second;
+					}
+					pair<int, int> tmp_xy;
+					tmp_xy = getGradDirectionDown(msc.cp_vec[curr_vid].xy_local);
+					
+					mesh_path.push_back(tmp_xy);
+					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
+						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
+						tmp_xy.first <= 2 || tmp_xy.second <= 2)
+						break;
+
+					prev_vid = curr_vid;
+					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+					{
+
+						cout << "ERROR,This line is ascend£¡" << endl;
+						break;
+					}
+				}
+				il.startIndex = it->xy_local;
+				il.endIndex = mesh_path[mesh_path.size() - 1];
+			}
+		}
+		//descend first part
+		for (vector<CriticalPoint>::iterator it = msc.saddles.begin(); it != msc.saddles.end(); ++it)
+		{
+			if (it->type == SADDLE)
+			{
+				CriticalPoint& sad = *it;
+
+				int prev_vid = -1, curr_vid = sad.meshIndex;
+
+				msc.il_vec.push_back(IntegrationLine());
+				IntegrationLine &il = msc.il_vec[msc.il_vec.size() - 1];
+				PATH& mesh_path = il.path;
+				mesh_path.push_back(make_pair(sad.xy_local.first, sad.xy_local.second));
+
+				while (msc.cp_vec[curr_vid].type != MAXIMAL)
+				{
+					while (msc.cp_vec[curr_vid].type == SADDLE)
+					{
+						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
+
+						double eig_vector_x = msc.cp_vec[curr_vid].eig_vector2.first;
+						double eig_vector_y = msc.cp_vec[curr_vid].eig_vector2.second;
+						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
+
+						mesh_path.push_back(xy);
+						curr_vid = xy.first*vr_size + xy.second;
+					}
+					pair<int, int> tmp_xy;
+					tmp_xy = getGradDirectionUp1(msc.cp_vec[curr_vid].xy_local);
+					
+					mesh_path.push_back(tmp_xy);
+					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
+						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
+						tmp_xy.first <= 2 || tmp_xy.second <= 2)
+						break;
+
+					prev_vid = curr_vid;
+					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+					{
+
+						cout << "This line is descend£¡" << endl;
+						break;
+					}
+				}
+				il.startIndex = it->xy_local;
+				il.endIndex = mesh_path[mesh_path.size() - 1];
+			}
+		}
+		//descend second part
+		for (vector<CriticalPoint>::iterator it = msc.saddles.begin(); it != msc.saddles.end(); ++it)
+		{
+			if (it->type == SADDLE)
+			{
+				CriticalPoint& sad = *it;
+
+				int prev_vid = -1, curr_vid = sad.meshIndex;
+
+				msc.il_vec.push_back(IntegrationLine());
+				IntegrationLine &il = msc.il_vec[msc.il_vec.size() - 1];
+				PATH& mesh_path = il.path;
+				mesh_path.push_back(make_pair(sad.xy_local.first, sad.xy_local.second));
+
+				while (msc.cp_vec[curr_vid].type != MAXIMAL)
+				{
+					while (msc.cp_vec[curr_vid].type == SADDLE)
+					{
+						pair<int, int> xy = msc.cp_vec[curr_vid].xy_local;
+
+						double eig_vector_x = -msc.cp_vec[curr_vid].eig_vector2.first;
+						double eig_vector_y = -msc.cp_vec[curr_vid].eig_vector2.second;
+						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
+
+						mesh_path.push_back(xy);
+						curr_vid = xy.first*vr_size + xy.second;
+					}
+					pair<int, int> tmp_xy;
+					tmp_xy = getGradDirectionDown1(msc.cp_vec[curr_vid].xy_local);
+					
+					mesh_path.push_back(tmp_xy);
+					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
+						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
+						tmp_xy.first <= 2 || tmp_xy.second <= 2)
+						break;
+
+					prev_vid = curr_vid;
+					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+					{
+
+						cout << "This line is descend£¡" << endl;
+						break;
+					}
+				}
+				il.startIndex = it->xy_local;
+				il.endIndex = mesh_path[mesh_path.size() - 1];
+			}
+		}
+		
 		return true;
 		}
 	

@@ -1,7 +1,7 @@
 #include <vector>
 #include <fstream>
 #include "mscomplex.h"
-#include "intetration_line_tracer.h"
+#include "integration_line_tracer.h"
 #include "critical_point_finder.h"
 using namespace std;
 namespace msc2d
@@ -15,7 +15,7 @@ namespace msc2d
 		cp_finder.findCriticalPoints();
 
 		ILTracer il_tracer(*this);
-		il_tracer.traceAscendingPath();
+		il_tracer.traceIntegrationPath();
 		return true;
 	}
 	bool MSComplex2D::saveMSComplex()const

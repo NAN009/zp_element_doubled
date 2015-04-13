@@ -1,5 +1,5 @@
-#ifndef intetration_line_tracer_h_
-#define intetration_line_tracer_h_
+#ifndef integration_line_tracer_h_
+#define integration_line_tracer_h_
 #include <utility>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace msc2d
 		ILTracer(MSComplex2D&);
 		~ILTracer();
 		bool traceIntegrationLine();
-		bool traceAscendingPath();
+		bool traceIntegrationPath();
 		int Round(double r);
 	private:
 		bool createWEdge();
