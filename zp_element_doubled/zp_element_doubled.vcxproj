@@ -101,6 +101,7 @@
     <ClCompile Include="point_evaluator_6direction1.cpp" />
     <ClCompile Include="point_evaluator_6direction2.cpp" />
     <ClCompile Include="point_evaluator_7direction.cpp" />
+    <ClCompile Include="VTK.cpp" />
     <ClCompile Include="zp_element_doubled.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\eigen</AdditionalIncludeDirectories>
     </ClCompile>
@@ -115,6 +116,7 @@
     <ClInclude Include="point_evaluator_6direction1.h" />
     <ClInclude Include="point_evaluator_6direction2.h" />
     <ClInclude Include="point_evaluator_7direction.h" />
+    <ClInclude Include="vtk.h" />
     <ClInclude Include="vtkReader.h" />
     <ClInclude Include="zp_element_doubled.h" />
   </ItemGroup>
@@ -123,6 +125,9 @@
     <None Include="ctrl_points_6direction1.txt" />
     <None Include="ctrl_points_6direction2.txt" />
     <None Include="ctrl_points_7direction.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="更换数据readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

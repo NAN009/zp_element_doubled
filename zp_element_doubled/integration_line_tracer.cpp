@@ -9,7 +9,6 @@ const int vr_size = 401;
 //shared_ptr<vtkReader> vr; 
 //vtkReader vr1;
 
-
 using namespace std;
 namespace msc2d
 {

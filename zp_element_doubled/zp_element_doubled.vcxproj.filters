@@ -45,6 +45,9 @@
     <ClCompile Include="integration_line_tracer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="VTK.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="box_spline.h">
@@ -80,6 +83,9 @@
     <ClInclude Include="integration_line_tracer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="vtk.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ctrl_points.txt">
@@ -94,5 +100,8 @@
     <None Include="ctrl_points_7direction.txt">
       <Filter>资源文件</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="更换数据readme.txt" />
   </ItemGroup>
 </Project>

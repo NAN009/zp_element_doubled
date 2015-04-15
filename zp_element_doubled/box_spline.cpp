@@ -35,18 +35,21 @@ double box_spline::compute_value(double x[])
 
 double box_spline::compute_gradient_x(double x[])
 {
-	double* p1 = new double[2];
-	double* p2 = new double[2];
-	double* tmp1 = p1;
-	double* tmp2 = p2;
-
-	*tmp1 = x[0]+0.5;
-	*tmp2 = x[0]-0.5;
-	tmp1++;
-	tmp2++;
-	*tmp1 = x[1];
-	*tmp2 = x[1];
-	return pe7->evaluate(p2)-pe7->evaluate(p1);//Ô­³ÌÐò£ºpe7->evaluate(p1)-pe7->evaluate(p2)
+	//double* p1 = new double[2];
+	//double* p2 = new double[2];
+	//double* tmp1 = p1;
+	//double* tmp2 = p2;
+	//
+	//*tmp1 = x[0]+0.5;
+	//*tmp2 = x[0]-0.5;
+	//tmp1++;
+	//tmp2++;
+	//*tmp1 = x[1];
+	//*tmp2 = x[1];
+	double p1[2],p2[2];
+	p1[0] = x[0] + 0.5; p2[0] = x[0] - 0.5;
+	p1[1] = x[1]; p2[1] = x[1];
+	return pe7->evaluate(p1)-pe7->evaluate(p2);//401sin£ºpe7->evaluate(p2)-pe7->evaluate(p1)
 	
 	}
 

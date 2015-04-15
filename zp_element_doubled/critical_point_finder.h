@@ -3,6 +3,7 @@
 #include <map>
 #include <utility>
 #include "mscomplex.h"
+#include "vtk.h"
 namespace msc2d
 {
 	class CPFinder
@@ -47,7 +48,7 @@ namespace msc2d
 		std::vector<double> x_ordinates;
 		std::vector<double> y_ordinates;
 
-		std::vector<std::vector<std::vector<double> > > data;
+		//std::vector<std::vector<std::vector<double> > > data;
 		//	std::vector<std::vector<double> > reconstructed_piece;
 
 
