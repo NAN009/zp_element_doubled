@@ -3,7 +3,6 @@
 #include <map>
 #include <utility>
 #include "mscomplex.h"
-#include "vtk.h"
 namespace msc2d
 {
 	class CPFinder

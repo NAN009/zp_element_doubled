@@ -45,9 +45,6 @@
     <ClCompile Include="integration_line_tracer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VTK.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="box_spline.h">
@@ -81,9 +78,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="integration_line_tracer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="vtk.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
