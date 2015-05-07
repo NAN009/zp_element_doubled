@@ -13,8 +13,8 @@
 
 namespace msc2d
 {
-	const double LARGE_ZERO_EPSILON = 0.0025;//401数据阈值0.0025,2e-6;
-	const double SMALL_ZERO_EPSILON = 2e-006;
+	const double LARGE_ZERO_EPSILON = 1e-1;//401数据阈值0.0025,2e-6;
+	const double SMALL_ZERO_EPSILON = 1e-100;
 	using namespace std;
 	vtkReader vr;
 	point_evaluator_7direction* p7;
@@ -52,11 +52,11 @@ namespace msc2d
 		bs = new box_spline();
 		//FILE * fp;
 
-		vr.loadFile("D:\\401data\\sin401.vtk");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
+		vr.loadFile("D:\\newData\\taiwan_2\\taiwan_2_gray.nak");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
 		double x_ordinates[10000], y_ordinates[10000];//第一个参数为列，按列读取数据
-		//ofstream value("D:\\401data\\sin401_cp1.txt");
-		ofstream dif_x("D:\\401data\\sin401_dif_x1.txt");
-		//ofstream dif_y("D:\\401data\\sin401_dif_y1.txt");
+		ofstream value("D:\\newData\\taiwan_2\\taiwan_2_gray_cp.txt");
+		//ofstream dif_x("D:\\2Ddata\\2d_filter_dif_x.txt");
+		//ofstream dif_y("D:\\401data\\sin401_dif_y.txt");
 		//ofstream dif_xx("D:\\data\\201sin_dif_xx.txt");
 		//ofstream dif_xy("D:\\data\\201sin_dif_xy.txt");
 		//ofstream dif_yy("D:\\data\\201sin_dif_yy.txt");
@@ -89,6 +89,7 @@ namespace msc2d
 		{
 			for (int j = 0; j < vr.dim[1]; j++)
 			{
+				
 				sum = 0; dif__x = 0; dif__y = 0; dif__yy = 0, dif__xy = 0, Value = 0, dif__xx = 0;
 				//value
 				if (i<3 || i > vr.dim[0] - 4 || j< 3 || j > vr.dim[0] - 4)
@@ -122,8 +123,8 @@ namespace msc2d
 						}
 					}
 				}
-				if (Value > 255)Value = 255;
-				if (Value < 0)Value = 0;
+				/*if (Value > 4)Value = 4;
+				if (Value < 0)Value = 0;*/
 				//if (Value > 4)Value = 4;
 
 				//求导
@@ -137,7 +138,7 @@ namespace msc2d
 						distance[1] = position[1] - y_ordinates[j];
 
 						value1 = bs->compute_gradient_x(distance);
-						/*diff_x = vr.getData(cut(position[0] + 1, vr.dim[0]), position[1])
+						diff_x = vr.getData(cut(position[0] + 1, vr.dim[0]), position[1])
 						+ vr.getData(cut(position[0] - 1, vr.dim[0]), position[1])
 						- 2 * vr.getData(position[0], position[1]);
 						diff_y = vr.getData(position[0], cut(position[1] + 1, vr.dim[1]))
@@ -145,8 +146,8 @@ namespace msc2d
 						- 2 * vr.getData(position[0], position[1]);
 
 						f_with_diff = vr.getData(position[0], position[1]) - 1.0*(diff_x + diff_y) / 8;
-						dif__x += f_with_diff*value1;*/
-						dif__x += vr.getData(position[0], position[1])*value1;
+						dif__x += f_with_diff*value1;
+						//dif__x += vr.getData(position[0], position[1])*value1;
 					}
 				}
 				for (int p = 0; p < 6; p++)
@@ -159,15 +160,24 @@ namespace msc2d
 						distance[1] = position[1] - y_ordinates[j];
 
 						value2 = bs->compute_gradient_y(distance);
-						dif__y += vr.getData(position[0], position[1])*value2;
+						diff_x = vr.getData(cut(position[0] + 1, vr.dim[0]), position[1])
+							+ vr.getData(cut(position[0] - 1, vr.dim[0]), position[1])
+							- 2 * vr.getData(position[0], position[1]);
+						diff_y = vr.getData(position[0], cut(position[1] + 1, vr.dim[1]))
+							+ vr.getData(position[0], cut(position[1] - 1, vr.dim[1]))
+							- 2 * vr.getData(position[0], position[1]);
+
+						f_with_diff = vr.getData(position[0], position[1]) - 1.0*(diff_x + diff_y) / 8;
+						dif__y += f_with_diff*value2;
+						//dif__y += vr.getData(position[0], position[1])*value2;
 
 					}
 				}
 				//导数最值
-				if (dif__x > 1)dif__x = 1;
+				/*if (dif__x > 1)dif__x = 1;
 				if (dif__x < -1)dif__x = -1;
 				if (dif__y > 1)dif__y = 1;
-				if (dif__y < -1)dif__y = -1;
+				if (dif__y < -1)dif__y = -1;*/
 				//求二阶导
 				for (int p = 0; p < 7; p++)
 				{
@@ -248,47 +258,96 @@ namespace msc2d
 				cp.xy_local.second = j;
 				cp.meshIndex = i*vr.dim[0] + j;
 				//cp.dif = make_pair(dif__x*20, dif__y*20);//401sin数据 步长为0.05，偏导数要扩大20倍
-				cp.dif = make_pair(dif__x, dif__y);
-
-
-				if (dif__x == 0 && dif__y == 0)
+				/*if (i >= 8 && i <= 31 && j >= 6 && j <= 47)
 				{
-
-					double eig_value[2], eig_vector[2][2], dif[2][2], eps = 1e-50;
-					const int Dim = 2, nJt = 1e20;
-
-					dif[0][0] = dif__xx; dif[0][1] = dif__xy; dif[1][0] = dif__xy; dif[1][1] = dif__yy;
-					//cout << i << " " << j << endl;
-					if (JacbiCor(*dif, *eig_vector, eig_value, eps, nJt))
-					{
-						if (eig_value[1]<0 && eig_value[0]<0)
-						{
-							cp.type = MAXIMAL;
-							cp.eig_vector1 = make_pair(0, 0);
-							cp.eig_vector2 = make_pair(0, 0);
-							maxPoint.push_back(cp);
-						}
-						else if (eig_value[0]>0 && eig_value[1]>0)
-						{
-							cp.type = MINIMAL;
-							cp.eig_vector1 = make_pair(0, 0);
-							cp.eig_vector2 = make_pair(0, 0);
-							minPoint.push_back(cp);
-						}
-						else
-						{
-							cp.type = SADDLE;
-							//特征向量
-							cp.eig_vector1 = make_pair(eig_vector[0][0], eig_vector[1][0]);
-							cp.eig_vector2 = make_pair(eig_vector[0][1], eig_vector[1][1]);
-							saddles.push_back(cp);
-						}
-						//value <<i << " "<<j<<" "<<cp.type<<endl;
-					}
+					cp.dif = make_pair(0, 0);
+					cp.type = MINIMAL;
+					cp.eig_vector1 = make_pair(0, 0);
+					cp.eig_vector2 = make_pair(0, 0);
+					minPoint.push_back(cp);
+					keyPoint.push_back(cp);
+				}
+				else if (i >= 97 && i <= 119 && j >= 32 && j <= 47)
+				{
+					cp.type = MAXIMAL;
+					cp.eig_vector1 = make_pair(0, 0);
+					cp.eig_vector2 = make_pair(0, 0);
+					maxPoint.push_back(cp);
+					keyPoint.push_back(cp);
+				}
+				else if (i >= 185 && i <= 207 && j >= 16 && j <= 48)
+				{
+					cp.dif = make_pair(0, 0);
+					cp.type = MINIMAL;
+					cp.eig_vector1 = make_pair(0, 0);
+					cp.eig_vector2 = make_pair(0, 0);
+					minPoint.push_back(cp);
+					keyPoint.push_back(cp);
+				}
+				else if (i >= 40 && i <= 63 && j >= 127 && j <= 159)
+				{
+					cp.type = MAXIMAL;
+					cp.eig_vector1 = make_pair(0, 0);
+					cp.eig_vector2 = make_pair(0, 0);
+					maxPoint.push_back(cp);
+					keyPoint.push_back(cp);
+				}
+				else if (i >= 103 && i <= 119 && j >= 245 && j <= 263)
+				{
+					cp.type = MAXIMAL;
+					cp.eig_vector1 = make_pair(0, 0);
+					cp.eig_vector2 = make_pair(0, 0);
+					maxPoint.push_back(cp);
 					keyPoint.push_back(cp);
 				}
 				else
-					cp.type = REGULAR;
+				{*/
+					cp.dif = make_pair(dif__x, dif__y);
+
+					if (dif__x == 0 && dif__y == 0)
+					{
+
+						double eig_value[2], eig_vector[2][2], dif[2][2], eps = 1e-50;
+						const int Dim = 2, nJt = 1e20;
+
+						dif[0][0] = dif__xx; dif[0][1] = dif__xy; dif[1][0] = dif__xy; dif[1][1] = dif__yy;
+						//cout << i << " " << j << endl;
+						if (JacbiCor(*dif, *eig_vector, eig_value, eps, nJt))
+						{
+							if (eig_value[1]<0 && eig_value[0]<0)
+							{
+								cp.type = MAXIMAL;
+								cp.eig_vector1 = make_pair(0, 0);
+								cp.eig_vector2 = make_pair(0, 0);
+								maxPoint.push_back(cp);
+								Value = 0;
+							}
+							else if (eig_value[0]>0 && eig_value[1]>0)
+							{
+								cp.type = MINIMAL;
+								cp.eig_vector1 = make_pair(0, 0);
+								cp.eig_vector2 = make_pair(0, 0);
+								minPoint.push_back(cp);
+								Value = 125;
+
+							}
+							else
+							{
+								cp.type = SADDLE;
+								//特征向量
+								cp.eig_vector1 = make_pair(eig_vector[0][0], eig_vector[1][0]);
+								cp.eig_vector2 = make_pair(eig_vector[0][1], eig_vector[1][1]);
+								saddles.push_back(cp);
+								Value = 255;
+							}
+							//value <<i << " "<<j<<" "<<cp.type<<endl;
+						}
+						keyPoint.push_back(cp);
+					}
+					else
+						cp.type = REGULAR;
+				
+				
 
 				cp_vec.push_back(cp);
 				//cout << cp.xy_local.first << " " << cp.xy_local.second << " " << cp.type << endl;
@@ -296,17 +355,17 @@ namespace msc2d
 
 
 				//cout << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << cp_vec[i].type << endl;
-				//value << Value << " ";
-				dif_x << dif__x << " ";
+				value << Value << " ";
+				//dif_x << dif__x << " ";
 				//dif_y << dif__y << " ";
 				/*dif_xx << dif__xx << " ";
 				dif_xy << dif__xy << " ";
 				dif_yy << dif__yy << " ";*/
 			}
-			//value << endl;
-			dif_x << endl;
-			//dif_y << endl;
-			/*dif_xx << endl;
+			value << endl;
+			/*dif_x << endl;
+			dif_y << endl;
+			dif_xx << endl;
 			dif_xy << endl;
 			dif_yy << endl;*/
 		}

@@ -296,23 +296,6 @@ namespace msc2d
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
 		int x = xy.first, y = xy.second;
-/*
-		double k1x = Round(EvaluateGradX(x, y));
-		double k2x = Round(EvaluateGradX(x + k1x, y + 1));
-		double k3x = Round(EvaluateGradX(x + k2x, y + 1));
-		double k4x = Round(EvaluateGradX(x + k3x, y + 2));
-
-		double k1y = Round(EvaluateGradY(x, y));
-		double k2y = Round(EvaluateGradY(x + 1, y + k1y));
-		double k3y = Round(EvaluateGradY(x + 1, y + k2y));
-		double k4y = Round(EvaluateGradY(x + 2, y + k3y));
-
-		double kx = x + (k1x + 2*k2x + 2*k3x + k4x) / 3;
-		double ky = y + (k1y + 2*k2y + 2*k3y + k4y) / 3;
-
-		return make_pair(Round(kx), Round(ky));*/
-		
-		//return make_pair(x+Rou(msc.cp_vec[x*vr_size + y].dif.first), y+Rou(msc.cp_vec[x*vr_size + y].dif.second));
 
 		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
 		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
@@ -328,33 +311,11 @@ namespace msc2d
 			2 * msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second +
 			2 * msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second +
 			msc.cp_vec[(x + 2)*vr_size + y + k3y].dif.second) / 3);
-		/*if (tmp_x < 0 || tmp_y < 0)
-			return make_pair(x, y);*/
+		
 		int next_X = x + tmp_x;
 		int next_Y = y + tmp_y;
 
 		return make_pair(next_X, next_Y);
-	/*	int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
-		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
-		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first);
-		int k1y = Round(msc.cp_vec[y*vr_size + x].dif.second);
-		int k2y = Round(msc.cp_vec[(y + k1y)*vr_size + x + 1].dif.second);
-		int k3y = Round(msc.cp_vec[(y + k2y)*vr_size + x + 1].dif.second);
-		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
-			2 * msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first +
-			2 * msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first +
-			msc.cp_vec[(x + k3x)*vr_size + y + 2].dif.first) / 3);
-		int tmp_y = Round((msc.cp_vec[y*vr_size + x].dif.second +
-			2 * msc.cp_vec[(y + k1y)*vr_size + x + 1].dif.second +
-			2 * msc.cp_vec[(y + k2y)*vr_size + x + 1].dif.second +
-			msc.cp_vec[(y + k3y)*vr_size + x + 2].dif.second) / 3);
-		if (tmp_x < 0 || tmp_y < 0)
-			return make_pair(x, y);
-		int next_X = x + tmp_x;
-		int next_Y = y + tmp_y;
-
-		return make_pair(next_X, next_Y);*/
-
 	}
 	pair<int, int> ILTracer::getGradDirectionDown(pair<int, int> xy)
 	{
