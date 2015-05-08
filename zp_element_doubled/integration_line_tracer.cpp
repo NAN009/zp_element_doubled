@@ -5,7 +5,8 @@
 //#include "vtkReader.h"
 #include "mscomplex.h"
 #include<memory>
-const int vr_size = 401;
+const int vr_size_1 = 1024;
+const int vr_size_2 = 768;
 //shared_ptr<vtkReader> vr; 
 //vtkReader vr1;
 
@@ -22,7 +23,7 @@ namespace msc2d
 	}
 	bool ILTracer::traceIntegrationPath()
 	{
-		cout << "Trace line path" << endl;
+		cout << "Trace line path!" << endl;
 		//ascend first part
 		for (vector<CriticalPoint>::iterator it = msc.saddles.begin(); it != msc.saddles.end(); ++it)
 		{
@@ -49,23 +50,25 @@ namespace msc2d
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 					
 						mesh_path.push_back(xy);
-						curr_vid = xy.first*vr_size + xy.second;
+						curr_vid = xy.first*vr_size_1 + xy.second;
 					}
+					if (msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 2 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 2
+						|| msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 3 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 3 ||
+						msc.cp_vec[curr_vid].xy_local.first <= 2 || msc.cp_vec[curr_vid].xy_local.second <= 2)
+						break;
 					pair<int, int> tmp_xy;
 					tmp_xy = getGradDirectionUp(msc.cp_vec[curr_vid].xy_local);
 					
 					mesh_path.push_back(tmp_xy);
-					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
-						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
-						tmp_xy.first <= 2 || tmp_xy.second <= 2)
-						break;
+					
 
 					prev_vid = curr_vid;
-					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					curr_vid = tmp_xy.first*vr_size_1 + tmp_xy.second;
 					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+						msc.cp_vec[curr_vid - vr_size_1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 + 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid + vr_size_1 - 1].type == MINIMAL)
 					{
 
 						cout << "ERROR,This line is ascend！" << endl;
@@ -101,23 +104,24 @@ namespace msc2d
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 
 						mesh_path.push_back(xy);
-						curr_vid = xy.first*vr_size + xy.second;
+						curr_vid = xy.first*vr_size_1 + xy.second;
 					}
+					if (msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 2 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 2
+						|| msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 3 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 3 ||
+						msc.cp_vec[curr_vid].xy_local.first <= 2 || msc.cp_vec[curr_vid].xy_local.second <= 2)
+						break;
 					pair<int, int> tmp_xy;
 					tmp_xy = getGradDirectionDown(msc.cp_vec[curr_vid].xy_local);
 					
 					mesh_path.push_back(tmp_xy);
-					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
-						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
-						tmp_xy.first <= 2 || tmp_xy.second <= 2)
-						break;
+					
 
 					prev_vid = curr_vid;
-					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					curr_vid = tmp_xy.first*vr_size_1 + tmp_xy.second;
 					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+						msc.cp_vec[curr_vid - vr_size_1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 - 1].type == MINIMAL)
 					{
 
 						cout << "ERROR,This line is ascend！" << endl;
@@ -153,23 +157,23 @@ namespace msc2d
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 
 						mesh_path.push_back(xy);
-						curr_vid = xy.first*vr_size + xy.second;
+						curr_vid = xy.first*vr_size_1 + xy.second;
 					}
+					if (msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 2 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 2
+						|| msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 3 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 3 ||
+						msc.cp_vec[curr_vid].xy_local.first <= 2 || msc.cp_vec[curr_vid].xy_local.second <= 2)
+						break;
 					pair<int, int> tmp_xy;
 					tmp_xy = getGradDirectionUp1(msc.cp_vec[curr_vid].xy_local);
 					
 					mesh_path.push_back(tmp_xy);
-					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
-						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
-						tmp_xy.first <= 2 || tmp_xy.second <= 2)
-						break;
-
+					
 					prev_vid = curr_vid;
-					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					curr_vid = tmp_xy.first*vr_size_1 + tmp_xy.second;
 					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+						msc.cp_vec[curr_vid - vr_size_1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 - 1].type == MINIMAL)
 					{
 
 						cout << "This line is descend！" << endl;
@@ -205,23 +209,24 @@ namespace msc2d
 						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
 
 						mesh_path.push_back(xy);
-						curr_vid = xy.first*vr_size + xy.second;
+						curr_vid = xy.first*vr_size_1 + xy.second;
 					}
+					if (msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 2 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 2
+						|| msc.cp_vec[curr_vid].xy_local.first >= vr_size_1 - 3 || msc.cp_vec[curr_vid].xy_local.second >= vr_size_2 - 3 ||
+						msc.cp_vec[curr_vid].xy_local.first <= 2 || msc.cp_vec[curr_vid].xy_local.second <= 2)
+						break;
 					pair<int, int> tmp_xy;
 					tmp_xy = getGradDirectionDown1(msc.cp_vec[curr_vid].xy_local);
 					
 					mesh_path.push_back(tmp_xy);
-					if (tmp_xy.first >= vr_size - 2 || tmp_xy.second >= vr_size - 2
-						|| tmp_xy.first >= vr_size - 3 || tmp_xy.second >= vr_size - 3 ||
-						tmp_xy.first <= 2 || tmp_xy.second <= 2)
-						break;
+					
 
 					prev_vid = curr_vid;
-					curr_vid = tmp_xy.first*vr_size + tmp_xy.second;
+					curr_vid = tmp_xy.first*vr_size_1 + tmp_xy.second;
 					if (msc.cp_vec[curr_vid].type == MINIMAL || msc.cp_vec[curr_vid + 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size].type == MINIMAL || msc.cp_vec[curr_vid + vr_size].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
-						msc.cp_vec[curr_vid - vr_size - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size - 1].type == MINIMAL)
+						msc.cp_vec[curr_vid - vr_size_1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid - 1].type == MINIMAL ||
+						msc.cp_vec[curr_vid - vr_size_1 - 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 + 1].type == MINIMAL || msc.cp_vec[curr_vid + vr_size_1 - 1].type == MINIMAL)
 					{
 
 						cout << "This line is descend！" << endl;
@@ -297,20 +302,20 @@ namespace msc2d
 
 		int x = xy.first, y = xy.second;
 
-		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
-		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
-		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first);
-		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
-		int k2y = Round(msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second);
-		int k3y = Round(msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second);
-		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
-			2 * msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first +
-			2 * msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first +
-			msc.cp_vec[(x + k3x)*vr_size + y + 2].dif.first) / 3);
-		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
-			2 * msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second +
-			2 * msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second +
-			msc.cp_vec[(x + 2)*vr_size + y + k3y].dif.second) / 3);
+		int k1x = Round(msc.cp_vec[x*vr_size_1 + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size_1 + y + 1].dif.first);
+		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size_1 + y + 1].dif.first);
+		int k1y = Round(msc.cp_vec[x*vr_size_1 + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x + 1)*vr_size_1 + y + k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x + 1)*vr_size_1 + y + k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size_1 + y].dif.first +
+			2 * msc.cp_vec[(x + k1x)*vr_size_1 + y + 1].dif.first +
+			2 * msc.cp_vec[(x + k2x)*vr_size_1 + y + 1].dif.first +
+			msc.cp_vec[(x + k3x)*vr_size_1 + y + 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size_1 + y].dif.second +
+			2 * msc.cp_vec[(x + 1)*vr_size_1 + y + k1y].dif.second +
+			2 * msc.cp_vec[(x + 1)*vr_size_1 + y + k2y].dif.second +
+			msc.cp_vec[(x + 2)*vr_size_1 + y + k3y].dif.second) / 3);
 		
 		int next_X = x + tmp_x;
 		int next_Y = y + tmp_y;
@@ -322,20 +327,20 @@ namespace msc2d
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
 		int x = xy.first, y = xy.second;
-		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
-		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first);
-		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first);
-		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
-		int k2y = Round(msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second);
-		int k3y = Round(msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second);
-		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
-			2 * msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first +
-			2 * msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first +
-			msc.cp_vec[(x - k3x)*vr_size + y - 2].dif.first) / 3);
-		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
-			2 * msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second +
-			2 * msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second +
-			msc.cp_vec[(x - 2)*vr_size + y - k3y].dif.second) / 3);
+		int k1x = Round(msc.cp_vec[x*vr_size_1 + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size_1 + y - 1].dif.first);
+		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size_1 + y - 1].dif.first);
+		int k1y = Round(msc.cp_vec[x*vr_size_1 + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x - 1)*vr_size_1 + y - k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x - 1)*vr_size_1 + y - k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size_1 + y].dif.first +
+			2 * msc.cp_vec[(x - k1x)*vr_size_1 + y - 1].dif.first +
+			2 * msc.cp_vec[(x - k2x)*vr_size_1 + y - 1].dif.first +
+			msc.cp_vec[(x - k3x)*vr_size_1 + y - 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size_1 + y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size_1 + y - k1y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size_1 + y - k2y].dif.second +
+			msc.cp_vec[(x - 2)*vr_size_1 + y - k3y].dif.second) / 3);
 		
 		int next_X = x + tmp_x;
 		int next_Y = y + tmp_y;
@@ -349,20 +354,20 @@ namespace msc2d
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
 		int x = xy.first, y = xy.second;
-		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
-		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first);
-		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first);
-		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
-		int k2y = Round(msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second);
-		int k3y = Round(msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second);
-		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
-			2 * msc.cp_vec[(x + k1x)*vr_size + y + 1].dif.first +
-			2 * msc.cp_vec[(x + k2x)*vr_size + y + 1].dif.first +
-			msc.cp_vec[(x + k3x)*vr_size + y + 2].dif.first) / 3);
-		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
-			2 * msc.cp_vec[(x + 1)*vr_size + y + k1y].dif.second +
-			2 * msc.cp_vec[(x + 1)*vr_size + y + k2y].dif.second +
-			msc.cp_vec[(x + 2)*vr_size + y + k3y].dif.second) / 3);
+		int k1x = Round(msc.cp_vec[x*vr_size_1 + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x + k1x)*vr_size_1 + y + 1].dif.first);
+		int k3x = Round(msc.cp_vec[(x + k2x)*vr_size_1 + y + 1].dif.first);
+		int k1y = Round(msc.cp_vec[x*vr_size_1 + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x + 1)*vr_size_1 + y + k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x + 1)*vr_size_1 + y + k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size_1 + y].dif.first +
+			2 * msc.cp_vec[(x + k1x)*vr_size_1 + y + 1].dif.first +
+			2 * msc.cp_vec[(x + k2x)*vr_size_1 + y + 1].dif.first +
+			msc.cp_vec[(x + k3x)*vr_size_1 + y + 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size_1 + y].dif.second +
+			2 * msc.cp_vec[(x + 1)*vr_size_1 + y + k1y].dif.second +
+			2 * msc.cp_vec[(x + 1)*vr_size_1 + y + k2y].dif.second +
+			msc.cp_vec[(x + 2)*vr_size_1 + y + k3y].dif.second) / 3);
 		
 		int next_X = x - tmp_x;
 		int next_Y = y - tmp_y;
@@ -375,20 +380,20 @@ namespace msc2d
 		//四阶龙格库塔法 h=2,待检验，Round向下取整
 
 		int x = xy.first, y = xy.second;
-		int k1x = Round(msc.cp_vec[x*vr_size + y].dif.first);
-		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first);
-		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first);
-		int k1y = Round(msc.cp_vec[x*vr_size + y].dif.second);
-		int k2y = Round(msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second);
-		int k3y = Round(msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second);
-		int tmp_x = Round((msc.cp_vec[x*vr_size + y].dif.first +
-			2 * msc.cp_vec[(x - k1x)*vr_size + y - 1].dif.first +
-			2 * msc.cp_vec[(x - k2x)*vr_size + y - 1].dif.first +
-			msc.cp_vec[(x - k3x)*vr_size + y - 2].dif.first) / 3);
-		int tmp_y = Round((msc.cp_vec[x*vr_size + y].dif.second +
-			2 * msc.cp_vec[(x - 1)*vr_size + y - k1y].dif.second +
-			2 * msc.cp_vec[(x - 1)*vr_size + y - k2y].dif.second +
-			msc.cp_vec[(x - 2)*vr_size + y - k3y].dif.second) / 3);
+		int k1x = Round(msc.cp_vec[x*vr_size_1 + y].dif.first);
+		int k2x = Round(msc.cp_vec[(x - k1x)*vr_size_1 + y - 1].dif.first);
+		int k3x = Round(msc.cp_vec[(x - k2x)*vr_size_1 + y - 1].dif.first);
+		int k1y = Round(msc.cp_vec[x*vr_size_1 + y].dif.second);
+		int k2y = Round(msc.cp_vec[(x - 1)*vr_size_1 + y - k1y].dif.second);
+		int k3y = Round(msc.cp_vec[(x - 1)*vr_size_1 + y - k2y].dif.second);
+		int tmp_x = Round((msc.cp_vec[x*vr_size_1 + y].dif.first +
+			2 * msc.cp_vec[(x - k1x)*vr_size_1 + y - 1].dif.first +
+			2 * msc.cp_vec[(x - k2x)*vr_size_1 + y - 1].dif.first +
+			msc.cp_vec[(x - k3x)*vr_size_1 + y - 2].dif.first) / 3);
+		int tmp_y = Round((msc.cp_vec[x*vr_size_1 + y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size_1 + y - k1y].dif.second +
+			2 * msc.cp_vec[(x - 1)*vr_size_1 + y - k2y].dif.second +
+			msc.cp_vec[(x - 2)*vr_size_1 + y - k3y].dif.second) / 3);
 
 		int next_X = x - tmp_x;
 		int next_Y = y - tmp_y;

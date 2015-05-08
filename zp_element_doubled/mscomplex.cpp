@@ -1,6 +1,7 @@
 #include <vector>
 #include <fstream>
 #include "mscomplex.h"
+#include <vector>
 #include "integration_line_tracer.h"
 #include "critical_point_finder.h"
 using namespace std;
@@ -20,23 +21,15 @@ namespace msc2d
 	}
 	bool MSComplex2D::saveMSComplex()const
 	{
-		ofstream cp("D:\\201test.txt");
-		for (int i = 0; i < cp_vec.size(); ++i)
+		ofstream il("D:\\newData\\taiwan_2\\taiwan_2_gray_filter_il.txt");
+		for (int i = 0; i < il_vec.size(); ++i)
 		{
-			
-			if (cp_vec[i].type == MAXIMAL)
+			//il<<il_vec[i].startIndex.first << " " << il_vec[i].endIndex;
+			for (int j = 0; j < il_vec[i].path.size();++j)
 			{
-				cp << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << "MAXIMAL"<<endl;
+				il << il_vec[i].path[j].first << " " << il_vec[i].path[j].second << endl;
 			}
-			if (cp_vec[i].type == MINIMAL)
-			{
-				cp << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << "MINIMAL" << endl;
-			}
-			if (cp_vec[i].type == SADDLE)
-			{
-				cp << cp_vec[i].xy_local.first << " " << cp_vec[i].xy_local.second << " " << "SADDLE"<<endl;
-			}
-			
+			il << endl;
 		}
 		return true;
 	}

@@ -52,9 +52,9 @@ namespace msc2d
 		bs = new box_spline();
 		//FILE * fp;
 
-		vr.loadFile("D:\\newData\\taiwan_2\\taiwan_2_gray.nak");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
+		vr.loadFile("D:\\newData\\taiwan_2\\taiwan_2_gray_filter.nak");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
 		double x_ordinates[10000], y_ordinates[10000];//第一个参数为列，按列读取数据
-		ofstream value("D:\\newData\\taiwan_2\\taiwan_2_gray_cp.txt");
+		ofstream value("D:\\newData\\taiwan_2\\taiwan_2_gray_filter_cp.txt");
 		//ofstream dif_x("D:\\2Ddata\\2d_filter_dif_x.txt");
 		//ofstream dif_y("D:\\401data\\sin401_dif_y.txt");
 		//ofstream dif_xx("D:\\data\\201sin_dif_xx.txt");
@@ -320,7 +320,7 @@ namespace msc2d
 								cp.eig_vector1 = make_pair(0, 0);
 								cp.eig_vector2 = make_pair(0, 0);
 								maxPoint.push_back(cp);
-								Value = 0;
+								//Value = 0;
 							}
 							else if (eig_value[0]>0 && eig_value[1]>0)
 							{
@@ -328,7 +328,7 @@ namespace msc2d
 								cp.eig_vector1 = make_pair(0, 0);
 								cp.eig_vector2 = make_pair(0, 0);
 								minPoint.push_back(cp);
-								Value = 125;
+								//Value = 125;
 
 							}
 							else
@@ -338,7 +338,7 @@ namespace msc2d
 								cp.eig_vector1 = make_pair(eig_vector[0][0], eig_vector[1][0]);
 								cp.eig_vector2 = make_pair(eig_vector[0][1], eig_vector[1][1]);
 								saddles.push_back(cp);
-								Value = 255;
+								//Value = 255;
 							}
 							//value <<i << " "<<j<<" "<<cp.type<<endl;
 						}
