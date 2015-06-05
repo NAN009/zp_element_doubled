@@ -16,7 +16,7 @@ namespace msc2d
 	struct CriticalPoint
 	{
 		CriticalPointType type;		//0 --minimal, 1 --saddle, 2 --maximal
-		pair<int, int> xy_local;				//index in original mesh
+		pair<double, double> xy_local;				//index in original mesh
 		int meshIndex;
 		//缺少源文件中CriticalPointNeighborArray类型
 		pair<double, double> eig_vector1;//特征向量
@@ -26,10 +26,10 @@ namespace msc2d
 	};
 	typedef std::vector<CriticalPoint> CriticalPointArray;
 
-	typedef std::vector< pair<int,int> > PATH;
+	typedef std::vector< pair<double,double> > PATH;
 	struct IntegrationLine
 	{
-		pair<int,int> startIndex, endIndex;//起始点x,y的位置
+		pair<double,double> startIndex, endIndex;//起始点x,y的位置
 		PATH path;//the index into original mesh, path always start from a saddle point to a max/min point
 	};
 	typedef std::vector<IntegrationLine> IntegrationLineArray;
@@ -52,8 +52,9 @@ namespace msc2d
 
 		IntegrationLineArray il_vec;
 
-		friend class CPFinder;
+		
 		friend class ILTracer;
+		friend class CriticalPointFind;
 	};
 }
 #endif

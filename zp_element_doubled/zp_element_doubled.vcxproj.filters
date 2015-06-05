@@ -42,7 +42,10 @@
     <ClCompile Include="mscomplex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="integration_line_tracer.cpp">
+    <ClCompile Include="criticalPoint.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="il_tracer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +80,10 @@
     <ClInclude Include="mscomplex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="integration_line_tracer.h">
+    <ClInclude Include="criticalPoint.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="il_tracer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

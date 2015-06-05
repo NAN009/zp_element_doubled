@@ -2,8 +2,10 @@
 #include <fstream>
 #include "mscomplex.h"
 #include <vector>
-#include "integration_line_tracer.h"
-#include "critical_point_finder.h"
+#include "il_tracer.h"
+//#include "integration_line_tracer.h"
+//#include "critical_point_finder.h"
+#include "criticalPoint.h"
 using namespace std;
 namespace msc2d
 {
@@ -12,11 +14,14 @@ namespace msc2d
 
 	bool MSComplex2D::createMSComplex2D()
 	{
-		CPFinder cp_finder(*this);
-		cp_finder.findCriticalPoints();
+		//CPFinder cp_finder(*this);
+		//cp_finder.findCriticalPoints();
+		CriticalPointFind cp_finder(*this);
+		cp_finder.findCriticalPoint();
 
 		ILTracer il_tracer(*this);
-		il_tracer.traceIntegrationPath();
+		il_tracer.traceIntegrationPath_RungeKutta();
+		//il_tracer.traceIntegrationPath();
 		return true;
 	}
 	bool MSComplex2D::saveMSComplex()const

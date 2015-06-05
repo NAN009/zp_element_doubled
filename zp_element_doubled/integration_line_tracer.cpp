@@ -317,8 +317,8 @@ namespace msc2d
 			2 * msc.cp_vec[(x + 1)*vr_size_1 + y + k2y].dif.second +
 			msc.cp_vec[(x + 2)*vr_size_1 + y + k3y].dif.second) / 3);
 		
-		int next_X = x + tmp_x;
-		int next_Y = y + tmp_y;
+		int next_X = x + tmp_x/sqrt(tmp_x*tmp_x + tmp_y*tmp_y);
+		int next_Y = y + tmp_y/sqrt(tmp_x*tmp_x + tmp_y*tmp_y);
 
 		return make_pair(next_X, next_Y);
 	}

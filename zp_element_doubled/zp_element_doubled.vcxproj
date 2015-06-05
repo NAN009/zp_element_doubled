@@ -93,9 +93,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="box_spline.cpp" />
+    <ClCompile Include="criticalPoint.cpp" />
     <ClCompile Include="critical_point_finder.cpp" />
     <ClCompile Include="global_functions.cpp" />
-    <ClCompile Include="integration_line_tracer.cpp" />
+    <ClCompile Include="il_tracer.cpp" />
     <ClCompile Include="mscomplex.cpp" />
     <ClCompile Include="point_evaluator.cpp" />
     <ClCompile Include="point_evaluator_6direction1.cpp" />
@@ -107,9 +108,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="box_spline.h" />
+    <ClInclude Include="criticalPoint.h" />
     <ClInclude Include="critical_point_finder.h" />
     <ClInclude Include="global_functions.h" />
-    <ClInclude Include="integration_line_tracer.h" />
+    <ClInclude Include="il_tracer.h" />
     <ClInclude Include="mscomplex.h" />
     <ClInclude Include="point_evaluator.h" />
     <ClInclude Include="point_evaluator_6direction1.h" />
