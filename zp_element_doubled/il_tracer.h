@@ -30,6 +30,8 @@ namespace msc2d
 		bool isBoundary(double x, double y);
 		pair<double, double> getTheSaddleBeginDirection(pair<double, double> xy, pair<double, double> eig_vector);
 		pair<double, double> getGradDirectionUp(pair<double,double> xy);
+		pair<double, double> getGradDirectionDown(pair<double, double> xy);
+		pair<double, double> getGradDirectionUp1(pair<double, double> xy);
 		int Round(double r);
 	private:
 		
