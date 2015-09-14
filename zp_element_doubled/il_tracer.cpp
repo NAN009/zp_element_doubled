@@ -13,10 +13,8 @@ inline double norm(double x, double y)
 {
 	return x*x + y*y;
 }
-const int vr_size_1 = 214;
-const int vr_size_2 = 286;
-const double LARGE_ZERO_EPSILON = 0.1;
-const double APPROACH = 0.1;
+const int vr_size_1 = 625;
+const int vr_size_2 = 219;
 using namespace std;
 namespace msc2d
 {
@@ -136,8 +134,102 @@ namespace msc2d
 		}
 		return true;
 	}
-	bool ILTracer::traceIntegrationPath_RungeKutta()
+	bool ILTracer::traceIntegrationPath_RungeKutta5()
+	{	
+		const double LARGE_ZERO_EPSILON = 0.04;
+		const double APPROACH = 0.4;
+		ofstream il_out("D:\\newData\\topo\\gd1wie220_20_il2mp.txt");
+		cout << "Trace line path!" << endl;
+
+		for (vector<CriticalPoint>::iterator it = msc.saddles.begin()+100; it != msc.saddles.end(); ++it)
+		{
+			if (it->type == SADDLE)
+			{
+				CriticalPoint& sad = *it;
+				pair<double, double> curr(sad.xy_local);
+				int prev_vid = -1, curr_vid = sad.meshIndex;
+				msc.il_vec.push_back(IntegrationLine());
+				IntegrationLine &il = msc.il_vec[msc.il_vec.size() - 1];
+				PATH& mesh_path = il.path;
+				mesh_path.push_back(sad.xy_local);
+				il_out << sad.xy_local.first << " " << sad.xy_local.second << endl;
+				while (!isMaximal(curr.first, curr.second))
+				{
+					if (isBoundary(curr.first, curr.second))
+						break;
+					while (isSaddle(curr.first, curr.second))
+					{
+						pair<double, double> saddle_positon = SaddlePosition(curr.first, curr.second);
+						pair<double, double> xy = curr;
+						double eig_vector_x = -msc.cp_vec[saddle_positon.first*vr_size_2 + saddle_positon.second].eig_vector2.first;
+						double eig_vector_y = -msc.cp_vec[saddle_positon.first*vr_size_2 + saddle_positon.second].eig_vector2.second;
+						xy = getTheSaddleBeginDirection(xy, make_pair(eig_vector_x, eig_vector_y));
+						mesh_path.push_back(xy);
+						il_out << xy.first << " " << xy.second << endl;
+						//curr_vid = Round(xy.first)*vr_size_2 + Round(xy.second);
+						curr = xy;
+					}
+					if (isBoundary(curr.first, curr.second))
+						break;
+					pair<double, double> tmp_xy;
+					tmp_xy = getGradDirectionUp(curr);
+
+					if (norm(tmp_xy.first - mesh_path[mesh_path.size() - 2].first, tmp_xy.second - mesh_path[mesh_path.size() - 2].second) < APPROACH*APPROACH || norm(tmp_xy.first - mesh_path[mesh_path.size() - 1].first, tmp_xy.second - mesh_path[mesh_path.size() - 1].second) < APPROACH*APPROACH)
+					{
+						if ((EvaluateGradX(tmp_xy.first, tmp_xy.second) < LARGE_ZERO_EPSILON&&
+							EvaluateGradY(tmp_xy.first, tmp_xy.second) < LARGE_ZERO_EPSILON) ||
+							isKeyPoint(tmp_xy.first, tmp_xy.second))
+						{
+							mesh_path.push_back(tmp_xy);
+							il_out << tmp_xy.first << " " << tmp_xy.second << endl;
+							//prev_vid = curr_vid;
+							//curr_vid = Round(tmp_xy.first)*vr_size_2 + Round(tmp_xy.second);
+							curr = tmp_xy;
+							cout << "This endPoint is a CriticalPoint£¡" << endl;
+							break;
+						}
+						else
+						{
+							double x_dir = EvaluateGradX(tmp_xy.first, tmp_xy.second);
+							double y_dir = EvaluateGradY(tmp_xy.first, tmp_xy.second);
+							tmp_xy.first += x_dir / sqrt(norm(x_dir, y_dir));
+							tmp_xy.second += y_dir / sqrt(norm(x_dir, y_dir));
+							bool b = true;
+							for (int t = mesh_path.size() - 4; t < mesh_path.size(); ++t)
+							{
+								if (tmp_xy.first - mesh_path[t].first>1.3 || tmp_xy.second - mesh_path[t].second>1.3)
+								{
+									b = false;
+								}
+							}
+							if (b == true)
+								break;
+						}
+					}
+					mesh_path.push_back(tmp_xy);
+					il_out << tmp_xy.first << " " << tmp_xy.second << endl;
+					//prev_vid = curr_vid;
+					//curr_vid = Round(tmp_xy.first)*vr_size_2 + Round(tmp_xy.second);
+					curr = tmp_xy;
+					if (isMinimal(curr.first, curr.second))
+					{
+						cout << "ERROR,This line is ascend£¡" << endl;
+						break;
+					}
+				}
+				il.startIndex = it->xy_local;
+				il.endIndex = mesh_path[mesh_path.size() - 1];
+				il_out << endl;
+			}
+		}
+		
+		return true;
+	}
+	bool ILTracer::traceIntegrationPath_RungeKutta2d()
 	{
+
+		const double LARGE_ZERO_EPSILON = 0.1;
+		const double APPROACH = 0.1;
 		ofstream il_out("D:\\newData\\2Ddata\\gd1wie120_20_iltext.txt");
 		cout << "Trace line path!" << endl;	
 	
@@ -655,10 +747,10 @@ namespace msc2d
 	{
 		double cur_x = xy.first;
 		double cur_y = xy.second;
-		double eig_vector_x = eig_vector.first;
-		double eig_vector_y = eig_vector.second;
+		double x = eig_vector.first;
+		double y = eig_vector.second;
 
-		return make_pair(cur_x + eig_vector_x, cur_y + eig_vector_y);
+		return make_pair(cur_x + x / sqrt(norm(x, y)), cur_y + y/ sqrt(norm(x, y)));
 	}
 	pair<double, double> ILTracer::getGradDirectionDown(pair<double, double> xy)
 	{
@@ -693,7 +785,7 @@ namespace msc2d
 		msc.cp_vec[(x + 2)*vr_size_2 + y + k3y].dif.second) / 3);*/
 		
 		double next_X = x - tmp_x / sqrt(norm(tmp_x, tmp_y));
-		double next_Y = y - tmp_y/ sqrt(norm(tmp_x, tmp_y));;
+		double next_Y = y - tmp_y/ sqrt(norm(tmp_x, tmp_y));
 
 		return make_pair(next_X, next_Y);
 	}

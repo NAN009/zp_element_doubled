@@ -8,8 +8,8 @@
 #include "vtkReader.h"
 #include <map>
 namespace msc2d
-{
-	const double LARGE_ZERO_EPSILON = 0.1;//401数据阈值0.0025,2e-6;taiwan_2_double3D_10_filter_50:5e-4,1e-100
+{											//2ddata  gd1wie220_20  large=0.1  5 0.01
+	const double LARGE_ZERO_EPSILON = 0.04;//401数据阈值0.0025,2e-6;taiwan_2_double3D_10_filter_50:5e-4,1e-100
 	const double SMALL_ZERO_EPSILON = 1e-100;
 	using namespace std;
 	vtkReader vr;
@@ -27,7 +27,7 @@ namespace msc2d
 		cout << "Find Critical Point Begin!" << endl;
 		box_spline *bs;
 		bs = new box_spline();
-		vr.loadFile("D:\\newData\\2Ddata\\gd1wie220_20.nak");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
+		vr.loadFile("D:\\newData\\topo\\gd1wie220_20.nak");//201数据：由于201数据步长为0.1，求偏导数的默认步长为1，故求出结果为实际结果的十分之一；
 		double x_ordinates[10000], y_ordinates[10000];
 
 		int m = 0;
@@ -55,13 +55,11 @@ namespace msc2d
 		{
 			for (int j = 0; j < vr.dim[1]; j++)
 			{
-
 				sum = 0; dif__x = 0; dif__y = 0; dif__yy = 0, dif__xy = 0, Value = 0, dif__xx = 0,dif__x1=0,dif__y1=0;
 				CriticalPoint cp;
 				cp.xy_local.first = i;
 				cp.xy_local.second = j;
-				cp.meshIndex = i*vr.dim[1] + j;
-				
+				cp.meshIndex = i*vr.dim[1] + j;				
 
 				gxmin = gymin = 1; gxmax = gymax = -1;
 				for (int m1 = 0; m1 < 7;++m1)
@@ -181,7 +179,6 @@ namespace msc2d
 								cp.eig_vector2 = make_pair(0, 0);
 								minPoint.push_back(cp);
 								//Value = 125;
-
 							}
 							else
 							{
@@ -204,15 +201,7 @@ namespace msc2d
 				{
 					cp.type = REGULAR;
 				}
-				cp_vec.push_back(cp);
-				
-				/*
-					if (dif__xx<SMALL_ZERO_EPSILON&&dif__xx>-SMALL_ZERO_EPSILON)
-					dif__xx = 0;
-					if (dif__yy<SMALL_ZERO_EPSILON&&dif__yy>-SMALL_ZERO_EPSILON)
-					dif__yy = 0;
-					if (dif__xy<SMALL_ZERO_EPSILON&&dif__xy>-SMALL_ZERO_EPSILON)
-					dif__xy = 0;*/												
+				cp_vec.push_back(cp);														
 			}		
 		}
 		delete bs;
@@ -221,7 +210,7 @@ namespace msc2d
 		cout << "Saddle point number:" << saddles.size() << endl;
 		cout << "Min point number:" << minPoint.size() << endl;
 
-		cout << "End !" << endl << endl;
+ 		cout << "End !" << endl << endl;
 	}
 	double EvaluateVal(const double x, const double y)
 	{
@@ -604,6 +593,5 @@ namespace msc2d
 		delete[]pdbTmpVec;
 
 		return 1;
-	}
-	 
+	} 
 }

@@ -62,7 +62,7 @@ int global_functions::str2int(string s)
     ss<<s;
     ss>>d;
 
-    return d;
+     return d;
 }
 
 //string to long integer function.

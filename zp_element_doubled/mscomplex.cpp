@@ -20,7 +20,7 @@ namespace msc2d
 		cp_finder.findCriticalPoint();
 
 		ILTracer il_tracer(*this);
-		il_tracer.traceIntegrationPath_RungeKutta();
+		il_tracer.traceIntegrationPath_RungeKutta5();
 		//il_tracer.traceIntegrationPath();
 		return true;
 	}

@@ -20,7 +20,8 @@ namespace msc2d
 		ILTracer(MSComplex2D& _msc);
 		~ILTracer();
 
-		bool traceIntegrationPath_RungeKutta();
+		bool traceIntegrationPath_RungeKutta2d();
+		bool traceIntegrationPath_RungeKutta5();
 		bool traceIntegrationPath();
 		bool isMaximal(double x, double y);
 		bool isMinimal(double x, double y);
@@ -31,7 +32,7 @@ namespace msc2d
 		pair<double, double> getTheSaddleBeginDirection(pair<double, double> xy, pair<double, double> eig_vector);
 		pair<double, double> getGradDirectionUp(pair<double,double> xy);
 		pair<double, double> getGradDirectionDown(pair<double, double> xy);
-		pair<double, double> getGradDirectionUp1(pair<double, double> xy);
+		
 		int Round(double r);
 	private:
 		
